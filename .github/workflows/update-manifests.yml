@@ -28,15 +28,14 @@ jobs:
     
     - name: Commit and push changes
       run: |
-        git fetch origin main
-        LOCAL_SHA=$(git rev-parse HEAD)
-        REMOTE_SHA=$(git rev-parse origin/main)
-        if [ "$LOCAL_SHA" != "$REMOTE_SHA" ]; then
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Check if there are changes
+        if git diff --quiet; then
+          echo "No changes to commit."
+        else
           git add deployment.yml
           git commit -m "update image tag to ${{ steps.get_tag.outputs.IMAGE_TAG }}"
           git push
-        else
-          echo "No changes to push, avoiding triggering itself."
         fi
