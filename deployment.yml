@@ -15,17 +15,14 @@ spec:
         app: flask-app
     spec:
       containers:
-      - name: flask-app
-        image: shirbenyosef1/flask_app:13
-        ports:
-        - containerPort: 5000
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-
-
-
+        - name: flask-app
+          image: shirbenyosef1/flask_app:14
+          ports:
+            - containerPort: 5000
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
