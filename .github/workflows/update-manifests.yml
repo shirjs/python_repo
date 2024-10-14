@@ -1,8 +1,9 @@
 name: update deployment image
 
 on:
-  repository_dispatch:
-    types: [dockerhub-push]
+  push:
+    branches:
+      - main
 
 jobs:
   update-manifests:
@@ -26,8 +27,15 @@ jobs:
     
     - name: Commit and push changes
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add deployment.yml
-        git commit -m "update image tag to ${{ steps.get_tag.outputs.IMAGE_TAG }}"
-        git push
+        git fetch origin main
+        LOCAL_SHA=$(git rev-parse HEAD)
+        REMOTE_SHA=$(git rev-parse origin/main)
+        if [ "$LOCAL_SHA" != "$REMOTE_SHA" ]; then
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add deployment.yml
+          git commit -m "update image tag to ${{ steps.get_tag.outputs.IMAGE_TAG }}"
+          git push
+        else
+          echo "No changes to push, avoiding triggering itself."
+        fi
