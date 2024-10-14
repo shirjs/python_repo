@@ -1,10 +1,9 @@
 name: update deployment image
 # #
 on:
-  push:
-    branches:
-      - main
-
+  repository_dispatch:
+    types: [trigger_build]
+    
 jobs:
   update-manifests:
     runs-on: ubuntu-latest
