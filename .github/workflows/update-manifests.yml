@@ -1,0 +1,33 @@
+name: update deployment image
+
+on:
+  repository_dispatch:
+    types: [dockerhub-push]
+
+jobs:
+  update-manifests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: get latest image tag
+      id: get_tag
+      run: |
+        echo "IMAGE_TAG=$(curl -s https://hub.docker.com/v2/repositories/shirbenyosef1/flask_app/tags/?page_size=1 | jq -r '.results[0].name')" >> $GITHUB_OUTPUT
+    
+    - name: install yq
+      run: |
+        wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+      
+    - name: update manifest
+      run: |
+        yq e '.spec.template.spec.containers[0].image = "shirbenyosef1/flask_app:${{ steps.get_tag.outputs.IMAGE_TAG }}"' -i deployment.yml
+    
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add deployment.yml
+        git commit -m "update image tag to ${{ steps.get_tag.outputs.IMAGE_TAG }}"
+        git push
