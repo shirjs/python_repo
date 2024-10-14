@@ -4,6 +4,7 @@ metadata:
   name: flask-app-service
   labels:
     app: flask-app
+    app.kubernetes.io/instance: flask-app
 spec:
   selector:
     app: flask-app
