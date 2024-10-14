@@ -19,8 +19,9 @@ jobs:
     
     - name: install yq
       run: |
-        wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
-      
+        wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq && chmod +x /usr/local/bin/yq
+
+          
     - name: update manifest
       run: |
         yq e '.spec.template.spec.containers[0].image = "shirbenyosef1/flask_app:${{ steps.get_tag.outputs.IMAGE_TAG }}"' -i deployment.yml
